@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>SIMLUR Executivo • Lote 01</title>
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css?v=graficos-ok-20260610" />
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">CCO</div>
+      <div>
+        <strong>SIMLUR Executivo</strong>
+        <span>Lote 01 • Presidência</span>
+      </div>
+    </div>
+
+    <nav>
+      <button class="nav-item active" data-page="painel">Painel Presidente</button>
+      <button class="nav-item" data-page="importacao">Importar Planilha</button>
+      <button class="nav-item" data-page="kpi">KPI Operacional</button>
+      <button class="nav-item" data-page="execucao">Execução P1–P12</button>
+      <button class="nav-item" data-page="mapa">Mapa Inteligente</button>
+      <button class="nav-item" data-page="fiscalizacao">Fiscalização</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Centro de Inteligência Operacional</p>
+        <h1 id="pageTitle">Painel Presidente</h1>
+      </div>
+
+      <div class="filters">
+        <select id="filtroMes"></select>
+        <select id="filtroServico"></select>
+
+        <select id="filtroTurno">
+          <option value="Todos">Todos os turnos</option>
+          <option>Diurno</option>
+          <option>Noturno</option>
+        </select>
+
+        <select id="filtroRA">
+          <option value="Todas">Todas as RAs</option>
+        </select>
+      </div>
+    </header>
+
+    <section id="painel" class="page active">
+      <div class="hero">
+        <div>
+          <p class="eyebrow">Lote 01</p>
+          <h2>Visão executiva dos serviços urbanos</h2>
+          <p>Planejado x executado, alertas e desempenho por serviço em uma única tela.</p>
+        </div>
+
+        <div class="hero-score">
+          <span>Eficiência</span>
+          <strong id="scoreGeral">0%</strong>
+        </div>
+      </div>
+
+      <div class="cards" id="cardsResumo"></div>
+
+      <div class="grid two">
+        <div class="panel chart-card">
+          <h3>Execução por Serviço</h3>
+          <div class="chart-box">
+            <canvas id="chartServicos"></canvas>
+          </div>
+        </div>
+
+        <div class="panel chart-card">
+          <h3>Ranking por RA</h3>
+          <div class="chart-box">
+            <canvas id="chartRA"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Resumo P1 a P12</h3>
+        <div class="table-wrap">
+          <table id="tabelaResumo"></table>
+        </div>
+      </div>
+    </section>
+
+    <section id="importacao" class="page">
+      <div class="panel import-box">
+        <h2>Importação oficial do Lote 01</h2>
+        <p>Selecione a planilha padrão com as abas: Painel Executivo, P1 a P12, BancoDados_ e Dias_Operação.</p>
+
+        <label class="dropzone">
+          <input type="file" id="arquivoExcel" accept=".xlsx,.xls" />
+          <span>Arraste ou clique para importar Excel</span>
+          <strong>Importação direta para o Supabase</strong>
+        </label>
+      </div>
+
+      <div class="grid two">
+        <div class="panel">
+          <h3>Validação das abas</h3>
+          <div id="validacaoAbas" class="checks"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Status da importação</h3>
+          <p><strong id="statusBase">Base demonstrativa</strong></p>
+          <p id="statusDetalhe">Aguardando importação da planilha.</p>
+          <pre id="jsonPreview"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="kpi" class="page">
+      <div class="cards" id="cardsKpi"></div>
+
+      <div class="grid two">
+        <div class="panel chart-card">
+          <h3>Evolução diária</h3>
+          <div class="chart-box">
+            <canvas id="chartDiario"></canvas>
+          </div>
+        </div>
+
+        <div class="panel chart-card">
+          <h3>Distribuição por turno</h3>
+          <div class="chart-box">
+            <canvas id="chartTurno"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="execucao" class="page">
+      <div class="panel">
+        <h3>Execução detalhada por serviço</h3>
+        <div class="table-wrap">
+          <table id="tabelaExecucao"></table>
+        </div>
+      </div>
+    </section>
+
+    <section id="mapa" class="page">
+      <div class="panel map-panel">
+        <h3>Mapa por Região Administrativa</h3>
+        <div id="map"></div>
+      </div>
+    </section>
+
+    <section id="fiscalizacao" class="page">
+      <div class="panel">
+        <h3>Alertas automáticos</h3>
+        <div id="alertas" class="alerts"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="config.js?v=graficos-ok-20260610"></script>
+  <script src="supabase.js?v=graficos-ok-20260610"></script>
+  <script src="data.js?v=graficos-ok-20260610"></script>
+  <script src="app.js?v=graficos-ok-20260610"></script>
+</body>
+</html>
